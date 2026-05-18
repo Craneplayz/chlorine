@@ -1,0 +1,355 @@
+{
+  "metadata": {
+    "title": "Vetted chlorine half-reaction constants",
+    "temperatureC": 25,
+    "activityModel": "Activities are encoded as log10(a) = constant + pH * pH + logC * logC. H+ is -pH, OH- is pH - 14, aqueous chlorine species generally use logC as a simple teaching-scale activity proxy unless a boundary note specifies standard activities, and Cl2(g) fugacity can be encoded from dissolved chlorine through log10(fCl2) = logC - log10(KH).",
+    "source": "User-provided vetted chlorine half-reaction table.",
+    "henryLaw": {
+      "cl2GasProxy": {
+        "KH": 0.052,
+        "unit": "molal per bar",
+        "log10KH": -1.284,
+        "usage": "For Cl2(g) boundaries tied to total dissolved chlorine, log10(fCl2) is approximated as logC - log10(KH)."
+      }
+    },
+    "warning": "Standard potentials are from the vetted dataset; activity assumptions remain simplified for teaching-scale visualization."
+  },
+  "boundaries": [
+    {
+      "id": "water_o2_h2o",
+      "kind": "water",
+      "label": "O2 / H2O",
+      "species": [],
+      "color": "#90a4ae",
+      "equation": "O2 + 4H+ + 4e- → 2H2O",
+      "note": "Upper water stability reference.",
+      "standardPotentialV": 1.229,
+      "electronCount": 4,
+      "reactants": [
+        { "label": "O2", "coefficient": 1, "logActivity": {} },
+        { "label": "H+", "coefficient": 4, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "H2O", "coefficient": 2, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "water_h2_h2o",
+      "kind": "water",
+      "label": "H+ / H2",
+      "species": [],
+      "color": "#90a4ae",
+      "equation": "2H+ + 2e- → H2",
+      "note": "Lower water stability reference.",
+      "standardPotentialV": 0.0,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "H+", "coefficient": 2, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "H2", "coefficient": 1, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "clo4_clo3",
+      "datasetNo": 1,
+      "kind": "redox",
+      "label": "ClO4- / ClO3-",
+      "species": ["clo4_minus", "clo3_minus"],
+      "color": "#6a7a89",
+      "equation": "ClO4- + 2H+ + 2e- → ClO3- + H2O",
+      "standardPotentialV": 1.201,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "ClO4-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 2, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "ClO3-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 1, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "clo4_cl2",
+      "datasetNo": 2,
+      "kind": "redox",
+      "label": "ClO4- / Cl2",
+      "species": ["clo4_minus", "cl2"],
+      "color": "#6a7a89",
+      "equation": "2ClO4- + 16H+ + 14e- → Cl2 + 8H2O",
+      "standardPotentialV": 1.392,
+      "electronCount": 14,
+      "reactants": [
+        { "label": "ClO4-", "coefficient": 2, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 16, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "Cl2", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 8, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "clo4_cl",
+      "datasetNo": 3,
+      "kind": "redox",
+      "label": "ClO4- / Cl-",
+      "species": ["clo4_minus", "cl_minus"],
+      "color": "#6a7a89",
+      "equation": "ClO4- + 8H+ + 8e- → Cl- + 4H2O",
+      "standardPotentialV": 1.388,
+      "electronCount": 8,
+      "reactants": [
+        { "label": "ClO4-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 8, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "Cl-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 4, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "clo3_clo2_g",
+      "datasetNo": 4,
+      "kind": "redox",
+      "label": "ClO3- / ClO2(g)",
+      "species": ["clo3_minus", "clo2_g"],
+      "color": "#8b6f47",
+      "equation": "ClO3- + 2H+ + e- → ClO2(g) + H2O",
+      "standardPotentialV": 1.175,
+      "electronCount": 1,
+      "reactants": [
+        { "label": "ClO3-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 2, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "ClO2(g)", "coefficient": 1, "logActivity": {} },
+        { "label": "H2O", "coefficient": 1, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "clo3_hclo2",
+      "datasetNo": 5,
+      "kind": "redox",
+      "label": "ClO3- / HClO2",
+      "species": ["clo3_minus", "hclo2"],
+      "color": "#cc7a29",
+      "equation": "ClO3- + 3H+ + 2e- → HClO2 + H2O",
+      "standardPotentialV": 1.181,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "ClO3-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 3, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "HClO2", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 1, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "clo3_cl2",
+      "datasetNo": 6,
+      "kind": "redox",
+      "label": "ClO3- / Cl2",
+      "species": ["clo3_minus", "cl2"],
+      "color": "#c45646",
+      "equation": "2ClO3- + 12H+ + 10e- → Cl2 + 6H2O",
+      "standardPotentialV": 1.468,
+      "electronCount": 10,
+      "reactants": [
+        { "label": "ClO3-", "coefficient": 2, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 12, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "Cl2", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 6, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "clo3_cl",
+      "datasetNo": 7,
+      "kind": "redox",
+      "label": "ClO3- / Cl-",
+      "species": ["clo3_minus", "cl_minus"],
+      "color": "#c45646",
+      "equation": "ClO3- + 6H+ + 6e- → Cl- + 3H2O",
+      "standardPotentialV": 1.45,
+      "electronCount": 6,
+      "reactants": [
+        { "label": "ClO3-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 6, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "Cl-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 3, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "clo2_g_hclo2",
+      "datasetNo": 8,
+      "kind": "redox",
+      "label": "ClO2(g) / HClO2",
+      "species": ["clo2_g", "hclo2"],
+      "color": "#8b6f47",
+      "equation": "ClO2(g) + H+ + e- → HClO2",
+      "standardPotentialV": 1.188,
+      "electronCount": 1,
+      "reactants": [
+        { "label": "ClO2(g)", "coefficient": 1, "logActivity": {} },
+        { "label": "H+", "coefficient": 1, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "HClO2", "coefficient": 1, "logActivity": { "logC": 1 } }
+      ]
+    },
+    {
+      "id": "hclo2_hocl",
+      "datasetNo": 9,
+      "kind": "redox",
+      "label": "HClO2 / HOCl",
+      "species": ["hclo2", "hocl"],
+      "color": "#cc7a29",
+      "equation": "HClO2 + 2H+ + 2e- → HClO + H2O",
+      "standardPotentialV": 1.64,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "HClO2", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 2, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "HClO", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 1, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "hclo2_cl",
+      "datasetNo": 10,
+      "kind": "redox",
+      "label": "HClO2 / Cl-",
+      "species": ["hclo2", "cl_minus"],
+      "color": "#cc7a29",
+      "equation": "HClO2 + 3H+ + 4e- → Cl- + 2H2O",
+      "standardPotentialV": 1.584,
+      "electronCount": 4,
+      "reactants": [
+        { "label": "HClO2", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 3, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "Cl-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 2, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "hclo2_cl2_g",
+      "datasetNo": 11,
+      "kind": "redox",
+      "label": "HClO2 / Cl2(g)",
+      "species": ["hclo2", "cl2_g"],
+      "color": "#cc7a29",
+      "equation": "2HClO2 + 6H+ + 6e- → Cl2(g) + 4H2O",
+      "standardPotentialV": 1.659,
+      "electronCount": 6,
+      "reactants": [
+        { "label": "HClO2", "coefficient": 2, "logActivity": { "logC": 1 } },
+        { "label": "H+", "coefficient": 6, "logActivity": { "pH": -1 } }
+      ],
+      "products": [
+        { "label": "Cl2(g)", "coefficient": 1, "logActivity": {} },
+        { "label": "H2O", "coefficient": 4, "logActivity": {} }
+      ]
+    },
+    {
+      "id": "ocl_cl2_g",
+      "datasetNo": 12,
+      "kind": "redox",
+      "label": "ClO- / Cl2(g)",
+      "species": ["ocl_minus", "cl2_g"],
+      "color": "#3aa36d",
+      "equation": "2ClO- + 2H2O + 2e- → Cl2(g) + 4OH-",
+      "standardPotentialV": 0.421,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "ClO-", "coefficient": 2, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 2, "logActivity": {} }
+      ],
+      "products": [
+        { "label": "Cl2(g)", "coefficient": 1, "logActivity": {} },
+        { "label": "OH-", "coefficient": 4, "logActivity": { "constant": -14, "pH": 1 } }
+      ]
+    },
+    {
+      "id": "ocl_cl",
+      "datasetNo": 13,
+      "kind": "redox",
+      "label": "ClO- / Cl-",
+      "species": ["ocl_minus", "cl_minus"],
+      "color": "#3aa36d",
+      "equation": "ClO- + H2O + 2e- → Cl- + 2OH-",
+      "standardPotentialV": 0.89,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "ClO-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "H2O", "coefficient": 1, "logActivity": {} }
+      ],
+      "products": [
+        { "label": "Cl-", "coefficient": 1, "logActivity": { "logC": 1 } },
+        { "label": "OH-", "coefficient": 2, "logActivity": { "constant": -14, "pH": 1 } }
+      ]
+    },
+    {
+      "id": "cl3_cl",
+      "datasetNo": 14,
+      "kind": "redox",
+      "label": "Cl3- / Cl-",
+      "species": ["cl3_minus", "cl_minus"],
+      "color": "#00838f",
+      "equation": "Cl3- + 2e- → 3Cl-",
+      "standardPotentialV": 1.415,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "Cl3-", "coefficient": 1, "logActivity": { "logC": 1 } }
+      ],
+      "products": [
+        { "label": "Cl-", "coefficient": 3, "logActivity": { "logC": 1 } }
+      ]
+    },
+    {
+      "id": "cl2_g_cl_henry",
+      "datasetNo": "15a",
+      "kind": "redox",
+      "label": "Cl2(g) / Cl-",
+      "species": ["cl2_g", "cl_minus"],
+      "regionReference": true,
+      "plotBoundary": false,
+      "color": "#8d6ec7",
+      "equation": "Cl2(g) + 2e- → 2Cl-",
+      "note": "Direct gas chlorine boundary. Cl2 fugacity is estimated from dissolved chlorine using log10(fCl2) = logC - log10(KH), KH = 0.052 molal/bar; this Henry-law-coupled reference coincides with the Cl2(aq) / Cl- boundary and is not plotted separately.",
+      "standardPotentialV": 1.358,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "Cl2(g)", "coefficient": 1, "logActivity": { "constant": 1.284, "logC": 1 } }
+      ],
+      "products": [
+        { "label": "Cl-", "coefficient": 2, "logActivity": { "logC": 1 } }
+      ]
+    },
+    {
+      "id": "cl2_aq_cl",
+      "datasetNo": 15,
+      "kind": "redox",
+      "label": "Cl2(aq) / Cl-",
+      "species": ["cl2", "cl_minus"],
+      "color": "#7d5fb2",
+      "equation": "Cl2(aq) + 2e- → 2Cl-",
+      "note": "Plotted at standard activities so the boundary stays at the vetted standard potential.",
+      "standardPotentialV": 1.396,
+      "electronCount": 2,
+      "reactants": [
+        { "label": "Cl2(aq)", "coefficient": 1, "logActivity": {} }
+      ],
+      "products": [
+        { "label": "Cl-", "coefficient": 2, "logActivity": {} }
+      ]
+    }
+  ]
+}

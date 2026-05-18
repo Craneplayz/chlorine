@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.slidev/
+*.log
+.DS_Store
+
+__pycache__
+.agents
+chlorine_kinetic_outputs
+test.py
+slides-export.pdf

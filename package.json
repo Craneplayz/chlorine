@@ -1,0 +1,18 @@
+{
+  "name": "chlorine-pourbaix-slidev",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev",
+    "build": "slidev build",
+    "export": "slidev export",
+    "precompute": "python3 scripts/chlorine.py",
+    "zotero:refs": "node scripts/fetch-zotero.mjs"
+  },
+  "dependencies": {
+    "@slidev/cli": "latest",
+    "@slidev/theme-seriph": "^0.25.0",
+    "vue": "latest"
+  }
+}

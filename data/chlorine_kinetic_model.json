@@ -1,0 +1,59 @@
+{
+  "title": "Kinetically constrained chlorine Eh-pH diagram",
+  "generatedAt": "2026-05-18T16:18:31.856776+00:00",
+  "source": "scripts/chlorine.py --kinetic",
+  "temperatureC": 25.0,
+  "logC": -3.0,
+  "grid": {
+    "pHCount": 260,
+    "eCount": 220
+  },
+  "timeSlices": [
+    {
+      "label": "1 s",
+      "seconds": 1.0
+    },
+    {
+      "label": "1 h",
+      "seconds": 3600.0
+    },
+    {
+      "label": "1 day",
+      "seconds": 86400.0
+    },
+    {
+      "label": "1 year",
+      "seconds": 31557600.0
+    }
+  ],
+  "initialCondition": "Total chlorine starts in the fast pool Cl-, Cl2(aq), HOCl, and OCl-. The fast pool is distributed by pH-dependent acid-base/hydrolysis speciation and a redox accessibility factor tied to the existing OCl-/Cl- boundary.",
+  "fastEquilibria": [
+    "Cl2(aq) + H2O <=> HOCl + H+ + Cl-",
+    "HOCl <=> H+ + OCl-"
+  ],
+  "fastEquilibriumParameters": {
+    "hoclPka": 7.5,
+    "cl2HydrolysisMidpointPH": 3.3,
+    "redoxSigmoidWidthV": 0.08
+  },
+  "slowKinetics": [
+    {
+      "species": "clo3_minus",
+      "label": "chlorate formation",
+      "boundaryId": "clo3_cl",
+      "k0PerSecond": 2e-05,
+      "betaPerVolt": 3.5,
+      "rateLaw": "k3 = k0 * exp(beta * max(Eh - Eeq(ClO3-/Cl-), 0))"
+    },
+    {
+      "species": "clo4_minus",
+      "label": "perchlorate formation from chlorate",
+      "boundaryId": "clo4_cl",
+      "k0PerSecond": 2e-08,
+      "betaPerVolt": 5.5,
+      "rateLaw": "k4 = k0 * exp(beta * max(Eh - Eeq(ClO4-/Cl-), 0))"
+    }
+  ],
+  "thermodynamicTarget": "The slow oxychlorine capacity is capped by the existing equilibrium alpha model computed from data/chlorine_half_reactions.json.",
+  "warning": "Schematic kinetic visualization only. Rate constants are adjustable teaching parameters, not calibrated chlorine kinetics."
+}

@@ -1,0 +1,159 @@
+:root {
+  --chlorine-green: #3aa36d;
+  --chlorine-gold: #d6a21e;
+  --chlorine-blue: #2f6fba;
+  --ink: #263238;
+  --cover-ink: #f7fbff;
+}
+
+.slidev-layout.cover-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-height: 100%;
+  padding: 0 5.4rem 0.9rem;
+  text-align: left;
+  color: var(--cover-ink);
+}
+
+.slidev-layout.cover-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 24, 38, 0.72) 0%,
+    rgba(8, 24, 38, 0.5) 42%,
+    rgba(8, 24, 38, 0.08) 100%
+  );
+}
+
+.slidev-layout.cover-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+.slidev-layout.cover-page h1 {
+  /* max-width: 13ch; */
+  margin-bottom: 1.8rem;
+  background: none;
+  background-image: none;
+  background-clip: initial;
+  -webkit-background-clip: initial;
+  -moz-background-clip: initial;
+  color: var(--cover-ink);
+  -webkit-text-fill-color: var(--cover-ink);
+  -moz-text-fill-color: var(--cover-ink);
+  font-size: 3.6rem;
+  line-height: 0.98;
+}
+
+.slidev-layout.cover-page h1 * {
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+  -moz-text-fill-color: inherit;
+}
+
+.slidev-layout.cover-page p {
+  margin: 0.35rem 0;
+  color: rgba(247, 251, 255, 0.84);
+  font-size: 1.35rem;
+}
+
+.slidev-layout.species-ladder table {
+  display: block;
+  width: 70%;
+  margin: 0 auto;
+  table-layout: fixed;
+  font-size:1rem;
+}
+
+.slidev-layout.species-ladder th,
+.slidev-layout.species-ladder td {
+  padding: 0.42rem 0.5rem;
+  vertical-align: middle;
+}
+
+.slidev-layout.species-ladder th {
+  font-weight: bold;
+}
+
+.slidev-layout.species-ladder th:nth-child(1),
+.slidev-layout.species-ladder td:nth-child(1) {
+  width: 14%;
+}
+
+.slidev-layout.species-ladder th:nth-child(2),
+.slidev-layout.species-ladder td:nth-child(2) {
+  width: 21%;
+}
+
+.slidev-layout.species-ladder th:nth-child(3),
+.slidev-layout.species-ladder td:nth-child(3) {
+  width: 14%;
+}
+
+.slidev-layout.species-ladder th:nth-child(4),
+.slidev-layout.species-ladder td:nth-child(4) {
+  width: 51%;
+}
+
+
+.slidev-layout.reaction-table table {
+  display: block;
+  width: 60%;
+  margin: 0 auto;
+  table-layout: fixed;
+  font-size: 1rem;
+}
+
+.slidev-layout.reaction-table th,
+.slidev-layout.reaction-table td {
+  padding: 0.42rem 0.5rem;
+  vertical-align: middle;
+}
+
+.slidev-layout.reaction-table th {
+  font-weight: bold;
+}
+
+.slidev-layout.reaction-table th:nth-child(1),
+.slidev-layout.reaction-table td:nth-child(1) {
+  width: 5%;
+}
+
+.slidev-layout.reaction-table th:nth-child(2),
+.slidev-layout.reaction-table td:nth-child(2) {
+  width: 21%;
+}
+
+.slidev-layout.reaction-table th:nth-child(3),
+.slidev-layout.reaction-table td:nth-child(3) {
+  width: 14%;
+}
+
+
+.slidev-layout.kinetic-diagram-slide {
+  padding: 1.25rem 2rem 1.35rem;
+}
+
+.slidev-layout.kinetic-diagram-slide h1 {
+  margin-bottom: 0.45rem;
+  font-size: 1.7rem;
+}
+
+.slidev-layout.kinetic-diagram-slide img {
+  display: block;
+  margin: 0 auto;
+  /* width: 100%; */
+  /* max-height: 78vh; */
+  /* object-fit: contain; */
+}
+
+/* .slidev-layout.kinetic-diagram-slide p {
+  margin-top: 0.35rem;
+  color: #455a64;
+  font-size: 0.78rem;
+} */
