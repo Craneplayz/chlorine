@@ -492,8 +492,7 @@ onBeforeUnmount(stopPlayback)
           :y="margin.top"
           :width="plotWidth"
           :height="plotHeight"
-          fill="#fbfaf6"
-          stroke="#cfd8dc"
+          class="plot-area"
         />
 
         <g v-for="tick in xTicks" :key="`x-${tick}`">
@@ -502,7 +501,7 @@ onBeforeUnmount(stopPlayback)
             :x2="xScale(tick)"
             :y1="margin.top"
             :y2="margin.top + plotHeight"
-            stroke="#e6e1d8"
+            class="grid-line"
             stroke-width="1"
           />
           <text :x="xScale(tick)" :y="height - 20" text-anchor="middle" class="axis-tick">{{ tick }}</text>
@@ -514,7 +513,7 @@ onBeforeUnmount(stopPlayback)
             :x2="margin.left + plotWidth"
             :y1="yScale(tick)"
             :y2="yScale(tick)"
-            stroke="#ece7dd"
+            class="grid-line"
             stroke-width="1"
           />
           <text :x="margin.left - 12" :y="yScale(tick) + 4" text-anchor="end" class="axis-tick">
@@ -599,7 +598,7 @@ onBeforeUnmount(stopPlayback)
           :x2="margin.left + plotWidth"
           :y1="margin.top + plotHeight"
           :y2="margin.top + plotHeight"
-          stroke="#455a64"
+          class="axis-frame"
           stroke-width="1.5"
         />
         <line
@@ -607,7 +606,7 @@ onBeforeUnmount(stopPlayback)
           :x2="margin.left"
           :y1="margin.top"
           :y2="margin.top + plotHeight"
-          stroke="#455a64"
+          class="axis-frame"
           stroke-width="1.5"
         />
 
@@ -818,6 +817,25 @@ onBeforeUnmount(stopPlayback)
 
 <style scoped>
 .pourbaix-shell {
+  --pourbaix-surface: #ffffff;
+  --pourbaix-panel-border: rgba(38, 50, 56, 0.14);
+  --pourbaix-panel-shadow: 0 12px 30px rgba(38, 50, 56, 0.08);
+  --pourbaix-plot-bg: #fbfaf6;
+  --pourbaix-plot-border: #cfd8dc;
+  --pourbaix-grid: #e6e1d8;
+  --pourbaix-frame: #455a64;
+  --pourbaix-text: #37474f;
+  --pourbaix-text-strong: #111827;
+  --pourbaix-text-muted: #607d8b;
+  --pourbaix-accent-text: #1f3c5c;
+  --pourbaix-accent: #1f78f2;
+  --pourbaix-button-bg: #ffffff;
+  --pourbaix-button-muted-bg: #eef3f6;
+  --pourbaix-card-bg: #f7f9fb;
+  --pourbaix-equation-edge: #2f6fba;
+  --pourbaix-composition-edge: #6a7a89;
+  --pourbaix-swatch-border: rgba(0, 0, 0, 0.12);
+  --pourbaix-region-label-halo: #ffffff;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(220px, 252px);
   gap: 12px;
@@ -828,13 +846,35 @@ onBeforeUnmount(stopPlayback)
   min-height: 0;
 }
 
+:global(html.dark) .pourbaix-shell {
+  --pourbaix-surface: #111827;
+  --pourbaix-panel-border: rgba(148, 163, 184, 0.26);
+  --pourbaix-panel-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+  --pourbaix-plot-bg: #101820;
+  --pourbaix-plot-border: #475569;
+  --pourbaix-grid: #334155;
+  --pourbaix-frame: #cbd5e1;
+  --pourbaix-text: #dbeafe;
+  --pourbaix-text-strong: #f8fafc;
+  --pourbaix-text-muted: #94a3b8;
+  --pourbaix-accent-text: #bfdbfe;
+  --pourbaix-accent: #60a5fa;
+  --pourbaix-button-bg: #1e293b;
+  --pourbaix-button-muted-bg: #172033;
+  --pourbaix-card-bg: #172033;
+  --pourbaix-equation-edge: #60a5fa;
+  --pourbaix-composition-edge: #94a3b8;
+  --pourbaix-swatch-border: rgba(248, 250, 252, 0.34);
+  --pourbaix-region-label-halo: #0f172a;
+}
+
 .chart-panel,
 .control-panel,
 .chart-control-card {
-  border: 1px solid rgba(38, 50, 56, 0.14);
+  border: 1px solid var(--pourbaix-panel-border);
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 12px 30px rgba(38, 50, 56, 0.08);
+  background: var(--pourbaix-surface);
+  box-shadow: var(--pourbaix-panel-shadow);
 }
 
 .diagram-column {
@@ -856,6 +896,19 @@ onBeforeUnmount(stopPlayback)
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.plot-area {
+  fill: var(--pourbaix-plot-bg);
+  stroke: var(--pourbaix-plot-border);
+}
+
+.grid-line {
+  stroke: var(--pourbaix-grid);
+}
+
+.axis-frame {
+  stroke: var(--pourbaix-frame);
 }
 
 .under-chart-panels {
@@ -896,18 +949,18 @@ onBeforeUnmount(stopPlayback)
   align-self: end;
   width: 24px;
   height: 24px;
-  border: 1px solid rgba(38, 50, 56, 0.2);
+  border: 1px solid var(--pourbaix-panel-border);
   border-radius: 6px;
-  background: #eef3f6;
-  color: #455a64;
+  background: var(--pourbaix-button-muted-bg);
+  color: var(--pourbaix-frame);
   padding: 0;
 }
 
 .mode-toggle.active {
-  background: #ffffff;
-  border-color: rgba(47, 111, 186, 0.35);
-  color: #1f3c5c;
-  box-shadow: 0 1px 3px rgba(38, 50, 56, 0.15);
+  background: var(--pourbaix-button-bg);
+  border-color: color-mix(in srgb, var(--pourbaix-accent) 55%, transparent);
+  color: var(--pourbaix-accent-text);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--pourbaix-frame) 28%, transparent);
 }
 
 .mode-icon {
@@ -923,7 +976,7 @@ onBeforeUnmount(stopPlayback)
 .control-title,
 label {
   margin: 0;
-  color: #37474f;
+  color: var(--pourbaix-text);
   font-size: 0.66rem;
   font-weight: 700;
   line-height: 1.05;
@@ -941,6 +994,7 @@ label sub {
 input[type="range"] {
   width: 100%;
   min-width: 0;
+  accent-color: var(--pourbaix-accent);
 }
 
 .play-toggle {
@@ -948,18 +1002,18 @@ input[type="range"] {
   place-items: center;
   width: 22px;
   height: 22px;
-  border: 1px solid rgba(38, 50, 56, 0.18);
+  border: 1px solid var(--pourbaix-panel-border);
   border-radius: 50%;
-  background: #ffffff;
-  color: #1f3c5c;
+  background: var(--pourbaix-button-bg);
+  color: var(--pourbaix-accent-text);
   padding: 0;
-  box-shadow: 0 1px 2px rgba(38, 50, 56, 0.12);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--pourbaix-frame) 24%, transparent);
 }
 
 .play-toggle.active {
-  background: #1f78f2;
-  border-color: #1f78f2;
-  color: #ffffff;
+  background: var(--pourbaix-accent);
+  border-color: var(--pourbaix-accent);
+  color: var(--pourbaix-surface);
 }
 
 .play-toggle svg {
@@ -970,7 +1024,7 @@ input[type="range"] {
 
 output {
   font-variant-numeric: tabular-nums;
-  color: #1f3c5c;
+  color: var(--pourbaix-accent-text);
   font-size: 0.62rem;
   font-weight: 700;
   text-align: right;
@@ -997,12 +1051,12 @@ output {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--pourbaix-swatch-border);
 }
 
 .equation-card {
-  border-left: 3px solid #2f6fba;
-  background: #f7f9fb;
+  border-left: 3px solid var(--pourbaix-equation-edge);
+  background: var(--pourbaix-card-bg);
   box-sizing: border-box;
   display: grid;
   flex: 0 0 auto;
@@ -1021,8 +1075,8 @@ output {
 }
 
 .composition-card {
-  border-left: 3px solid #6a7a89;
-  background: #f7f9fb;
+  border-left: 3px solid var(--pourbaix-composition-edge);
+  background: var(--pourbaix-card-bg);
   box-sizing: border-box;
   align-self: stretch;
   padding: 7px 10px 8px;
@@ -1041,7 +1095,7 @@ output {
 }
 
 .coordinate-readout {
-  color: #111827;
+  color: var(--pourbaix-text-strong);
   font-size: 0.68rem;
   font-variant-numeric: tabular-nums;
   font-weight: 800;
@@ -1055,15 +1109,15 @@ output {
 .unit-toggle {
   min-width: 38px;
   height: 22px;
-  border: 1px solid rgba(38, 50, 56, 0.18);
+  border: 1px solid var(--pourbaix-panel-border);
   border-radius: 5px;
-  background: #ffffff;
-  color: #1f3c5c;
+  background: var(--pourbaix-button-bg);
+  color: var(--pourbaix-accent-text);
   font-size: 0.62rem;
   font-weight: 800;
   line-height: 1;
   padding: 0 5px;
-  box-shadow: 0 1px 2px rgba(38, 50, 56, 0.12);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--pourbaix-frame) 24%, transparent);
 }
 
 .composition-list {
@@ -1085,7 +1139,7 @@ output {
 .composition-label {
   min-width: 0;
   overflow: hidden;
-  color: #37474f;
+  color: var(--pourbaix-text);
   font-size: 0.64rem;
   line-height: 1.15;
   text-overflow: ellipsis;
@@ -1093,7 +1147,7 @@ output {
 }
 
 .composition-value {
-  color: #1f3c5c;
+  color: var(--pourbaix-accent-text);
   font-size: 0.64rem;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
@@ -1110,6 +1164,7 @@ output {
 
 .equation-title {
   margin: 0 0 4px;
+  color: var(--pourbaix-text);
   font-size: 0.72rem;
   font-weight: 700;
   line-height: 1.15;
@@ -1124,7 +1179,7 @@ output {
 }
 
 .equation {
-  color: #1f3c5c;
+  color: var(--pourbaix-accent-text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   display: -webkit-box;
   overflow-wrap: anywhere;
@@ -1135,7 +1190,7 @@ output {
 
 .equation-note,
 .caption {
-  color: #607d8b;
+  color: var(--pourbaix-text-muted);
   display: -webkit-box;
   overflow-wrap: anywhere;
   overflow: hidden;
@@ -1144,12 +1199,12 @@ output {
 }
 
 .axis-tick {
-  fill: #607d8b;
+  fill: var(--pourbaix-text-muted);
   font-size: 12px;
 }
 
 .axis-label {
-  fill: #263238;
+  fill: var(--pourbaix-text-strong);
   font-size: 14px;
   font-weight: 700;
 }
@@ -1158,7 +1213,7 @@ output {
   font-size: 17px;
   font-weight: 700;
   paint-order: stroke;
-  stroke: #fff;
+  stroke: var(--pourbaix-region-label-halo);
   stroke-width: 3px;
 }
 

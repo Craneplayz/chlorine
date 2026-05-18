@@ -31,7 +31,7 @@ def write_static_phase_diagram(payload: dict) -> None:
         payload.get("metadata", {}).get("staticTemperatureC", STATIC_TEMPERATURE_C)
     )
 
-    fig, ax = plt.subplots(figsize=(12.8, 6.6), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(10, 6), constrained_layout=True)
     ax.set_facecolor("#fbfaf6")
 
     for region in current_slice.get("regions", payload["regions"]):
@@ -115,29 +115,20 @@ def write_static_phase_diagram(payload: dict) -> None:
     ax.set_xlabel("pH")
     ax.set_ylabel("E (V vs SHE)")
     ax.set_title(
-        "Teaching-scale chlorine Pourbaix diagram\n"
-        f"total chlorine = {10 ** STATIC_LOG_C:g} M; "
-        f"T = {static_temperature_c:g} C"
+        "Chlorine Pourbaix Diagram\n"
+        f"(Total chlorine = {10 ** STATIC_LOG_C:g} M; "
+        f"T = {static_temperature_c:g} °C)"
     )
     ax.set_xticks(range(0, 15, 2))
     ax.grid(True, color="#d8d2c8", linewidth=0.8, alpha=0.65)
     ax.legend(
-        loc="upper left",
-        bbox_to_anchor=(1.01, 1.0),
+        loc="upper right",
+        # bbox_to_anchor=(1.01, 1.0),
         frameon=True,
         framealpha=0.92,
         facecolor="white",
         edgecolor="#cfd8dc",
         fontsize=8,
-    )
-    ax.text(
-        0.01,
-        -0.15,
-        payload["metadata"]["warning"],
-        transform=ax.transAxes,
-        fontsize=8,
-        color="#607d8b",
-        va="top",
     )
 
     STATIC_PNG_OUT.parent.mkdir(parents=True, exist_ok=True)

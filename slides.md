@@ -4,7 +4,7 @@ title: Chlorine Pourbaix Diagram
 info: |
   Conceptual walkthrough of chlorine speciation across pH and redox potential.
 layout: cover
-background: /assets/cover.jpg
+background: /cover.jpg
 backgroundSize: cover
 class: cover-page text-left text-white
 transition: fade-out
@@ -137,7 +137,7 @@ class: kinetic-diagram-slide
 
 # Kinetically Constrained Chlorine Eh-pH Diagram
 
-<img class="rounded-xl h-115 dark:invert-100" src="/assets/chlorine_kinetic_constrained.png" alt="Kinetically constrained chlorine Eh-pH diagram with one second, one hour, one day, and one year panels" />
+<img class="rounded-xl h-115 dark:invert-100" src="/src/chlorine_kinetic_constrained.png" alt="Kinetically constrained chlorine Eh-pH diagram with one second, one hour, one day, and one year panels" />
 
 <!-- Time-dependent kinetic phase map with -->
 <!-- 
