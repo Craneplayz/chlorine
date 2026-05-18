@@ -44,7 +44,6 @@ In aqueous solution, chlorine could have the following species:
 # Pourbaix Diagram
 
 > <span class="text-lg"> **Nernst equation** <small>(1887)</small></span>
-
 > $$E = E^\circ - \frac{RT}{nF}\ln Q=E^\circ - \frac{RT}{nF}\ln \frac{a_\text{Red}}{a_\text{ox}}$$
 
 A **Pourbaix diagram** (also known as $E_\mathrm{H}$-$p\mathrm{H}$ phase diagram) maps the **thermodynamically favoured** species within an reaction system as a function of:
@@ -132,18 +131,126 @@ $$
 Here, $\mathrm{Cl_2}$, $\mathrm{HOCl}$ <small>($pK_a=7.5$)</small>, and $\mathrm{OCl^-}$ are treated as fast-equilibrium species, while $\mathrm{ClO_3^-}$ and $\mathrm{ClO_4^-}$ accumulate through slow schematic kinetic steps.
 
 ---
+
+# Fast Pool
+
+The fast chlorine pool is distributed by $\mathrm{pH}$-dependent speciation and a smooth redox switch:
+
+$$
+s(E_h,\mathrm{pH})
+=
+\sigma\left(-\dfrac{E_h-E_{eq}^{\mathrm{OCl^-}/\mathrm{Cl^-}}(\mathrm{pH})}{w}\right)
+=
+\frac{1}
+{1+\exp\left[-\dfrac{E_h-E_{eq}^{\mathrm{OCl^-}/\mathrm{Cl^-}}(\mathrm{pH})}{w}\right]}
+$$
+
+where $w=0.08\ \mathrm{V}$ is a smoothing width.
+
+From Henderson-Hasselbalch equation, for the hypochlorous acid equilibrium $\mathrm{HOCl \rightleftharpoons H^+ + OCl^-}$, we have $f_{\mathrm{HOCl}}=1/(1+10^{\mathrm{pH}-pK_a})$ and $f_{\mathrm{OCl^-}}=1-f_{\mathrm{HOCl}}$. 
+
+Similarly, for the simplified chlorine hydrolysis transition, we assume $f_{\mathrm{Cl_2}}=0.35/(1+10^{\mathrm{pH}-\mathrm{pH}_{mid}})$ , with $\mathrm{pH}_{mid}\approx 3.3$ used as a schematic midpoint.
+
+---
+
+# Fast Pool <small>(continued)</small>
+
+Therefore:
+
+$$
+\boxed{\begin{cases}
+c_{\mathrm{Cl^-}} &= 1-s \\
+c_{\mathrm{Cl_2}} &= s f_{\mathrm{Cl_2}} \\
+c_{\mathrm{HOCl}} &= s(1-f_{\mathrm{Cl_2}})f_{\mathrm{HOCl}}\\
+c_{\mathrm{OCl^-}} &= s(1-f_{\mathrm{Cl_2}})(1-f_{\mathrm{HOCl}})
+\end{cases}}
+$$
+
+---
+
+# Slow Pool: Kinetic Accumulation
+
+The slow oxychlorine species are approximated as a first-order chain:
+
+$$
+\text{fast pool}
+\xrightarrow{k_3}
+\mathrm{ClO_3^-}
+\xrightarrow{k_4}
+\mathrm{ClO_4^-}
+$$
+
+The schematic rate constants depend on overpotential (Tafel-like law):
+
+$$
+k_3
+=
+k_{0,3}
+\exp\left[
+\beta_3
+\max\left(E_h-E_{eq}^{\mathrm{ClO_3^-}/\mathrm{Cl^-}},0\right)
+\right]
+$$
+
+$$
+k_4
+=
+k_{0,4}
+\exp\left[
+\beta_4
+\max\left(E_h-E_{eq}^{\mathrm{ClO_4^-}/\mathrm{Cl^-}},0\right)
+\right]
+$$
+
+For a chain of three pools $A \to B \to C$:
+
+$$
+A(t)=e^{-k_3t},\quad
+B(t)
+=
+\frac{k_3}{k_4-k_3}
+\left(e^{-k_3t}-e^{-k_4t}\right),\quad
+C(t)=1-A(t)-B(t)
+$$
+
+So in this diagram:
+
+$$
+\boxed{B(t)\approx \mathrm{ClO_3^-},
+\qquad
+C(t)\approx \mathrm{ClO_4^-}}
+$$
+
+---
+
+# Thermodynamic cap
+
+The slow species are not allowed to grow without limit. Their total capacity is capped by the equilibrium Pourbaix calculation:
+
+$$
+C_{\mathrm{slow,max}}
+=
+\alpha_{\mathrm{ClO_3^-}}^{eq}
++
+\alpha_{\mathrm{ClO_4^-}}^{eq}
+$$
+
+Then the kinetic products are rescaled into this thermodynamic capacity.
+
+
+> **Equilibrium tells us where the system wants to go.**  
+> **Kinetics tells us how fast it can get there.**
+
+
+---
 class: kinetic-diagram-slide
 ---
 
-# Kinetically Constrained Chlorine Eh-pH Diagram
+# Kinetic Simulation Results
 
 <img class="rounded-xl h-115 dark:invert-100" src="/src/chlorine_kinetic_constrained.png" alt="Kinetically constrained chlorine Eh-pH diagram with one second, one hour, one day, and one year panels" />
 
-<!-- Time-dependent kinetic phase map with -->
-<!-- 
----
-
-# Environmental Implications -->
+<!-- # Environmental Implications --> -->
 
 ---
 

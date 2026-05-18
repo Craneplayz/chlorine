@@ -1,4 +1,5 @@
 <script setup>
+import { useDarkMode } from '@slidev/client'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import pourbaixData from '../data/chlorine_pourbaix.json'
 
@@ -43,6 +44,7 @@ const cursorPoint = ref(null)
 const displayMode = ref('preset')
 const compositionView = ref('percent')
 const playingControl = ref(null)
+const { isDark } = useDarkMode()
 let playbackFrame = null
 
 const playbackDurationMs = 2600
@@ -476,7 +478,7 @@ onBeforeUnmount(stopPlayback)
 </script>
 
 <template>
-  <div class="pourbaix-shell">
+  <div class="pourbaix-shell" :class="{ 'is-dark': isDark }">
     <div class="diagram-column">
       <div class="chart-panel">
         <svg
@@ -832,6 +834,8 @@ onBeforeUnmount(stopPlayback)
   --pourbaix-button-bg: #ffffff;
   --pourbaix-button-muted-bg: #eef3f6;
   --pourbaix-card-bg: #f7f9fb;
+  --pourbaix-control-track: #e5e7eb;
+  --pourbaix-control-thumb: #6b7280;
   --pourbaix-equation-edge: #2f6fba;
   --pourbaix-composition-edge: #6a7a89;
   --pourbaix-swatch-border: rgba(0, 0, 0, 0.12);
@@ -846,7 +850,7 @@ onBeforeUnmount(stopPlayback)
   min-height: 0;
 }
 
-:global(html.dark) .pourbaix-shell {
+.pourbaix-shell.is-dark {
   --pourbaix-surface: #111827;
   --pourbaix-panel-border: rgba(148, 163, 184, 0.26);
   --pourbaix-panel-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
@@ -862,6 +866,8 @@ onBeforeUnmount(stopPlayback)
   --pourbaix-button-bg: #1e293b;
   --pourbaix-button-muted-bg: #172033;
   --pourbaix-card-bg: #172033;
+  --pourbaix-control-track: #334155;
+  --pourbaix-control-thumb: #cbd5e1;
   --pourbaix-equation-edge: #60a5fa;
   --pourbaix-composition-edge: #94a3b8;
   --pourbaix-swatch-border: rgba(248, 250, 252, 0.34);
@@ -992,9 +998,53 @@ label sub {
 }
 
 input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
   width: 100%;
   min-width: 0;
   accent-color: var(--pourbaix-accent);
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border: 1px solid var(--pourbaix-panel-border);
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--pourbaix-accent), var(--pourbaix-control-track));
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border: 2px solid var(--pourbaix-surface);
+  border-radius: 50%;
+  background: var(--pourbaix-control-thumb);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--pourbaix-frame) 38%, transparent);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border: 1px solid var(--pourbaix-panel-border);
+  border-radius: 999px;
+  background: var(--pourbaix-control-track);
+}
+
+input[type="range"]::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--pourbaix-accent);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--pourbaix-surface);
+  border-radius: 50%;
+  background: var(--pourbaix-control-thumb);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--pourbaix-frame) 38%, transparent);
 }
 
 .play-toggle {
