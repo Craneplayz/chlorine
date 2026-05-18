@@ -19,7 +19,7 @@ DISPLAY_ARROW = "→"
 
 PH_VALUES = [round(i * 0.25, 2) for i in range(57)]
 LOG_C_VALUES = [round(-6 + i * 0.5, 2) for i in range(13)]
-TEMPERATURE_C_VALUES = [float(value) for value in range(0, 51, 5)]
+TEMPERATURE_C_VALUES = [index * 2.5 for index in range(41)]
 DEFAULT_TEMPERATURE_C = 25.0
 STATIC_TEMPERATURE_C = 25.0
 STATIC_LOG_C = -3.0

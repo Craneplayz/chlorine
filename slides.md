@@ -129,7 +129,7 @@ $$
 \text{dominant species}=\arg\max_i c_i(t;\mathrm{pH},E_h)
 $$
 
-Here, $\mathrm{Cl_2}$, $\mathrm{HOCl}$, and $\mathrm{OCl^-}$ are treated as fast-equilibrium species, while $\mathrm{ClO_3^-}$ and $\mathrm{ClO_4^-}$ accumulate through slow schematic kinetic steps.
+Here, $\mathrm{Cl_2}$, $\mathrm{HOCl}$ <small>($pK_a=7.5$)</small>, and $\mathrm{OCl^-}$ are treated as fast-equilibrium species, while $\mathrm{ClO_3^-}$ and $\mathrm{ClO_4^-}$ accumulate through slow schematic kinetic steps.
 
 ---
 class: kinetic-diagram-slide

@@ -409,7 +409,7 @@ function formatConcentration(value) {
 function formatTemperature(value) {
   const numericValue = Number(value)
   if (!Number.isFinite(numericValue)) return '25 °C'
-  return `${numericValue.toFixed(0)} °C`
+  return `${Number.isInteger(numericValue) ? numericValue.toFixed(0) : numericValue.toFixed(1)} °C`
 }
 
 function setPlaybackValue(control, value) {
@@ -659,7 +659,7 @@ onBeforeUnmount(stopPlayback)
             class="play-toggle"
             :class="{ active: playingControl === 'temperatureC' }"
             :aria-label="playingControl === 'temperatureC' ? 'Stop temperature playback' : 'Play temperature range'"
-            :title="playingControl === 'temperatureC' ? 'Stop' : 'Play temperature from 0 °C to 50 °C'"
+            :title="playingControl === 'temperatureC' ? 'Stop' : 'Play temperature from 0 °C to 100 °C'"
             @click="togglePlayback('temperatureC')"
           >
             <svg v-if="playingControl === 'temperatureC'" viewBox="0 0 24 24" aria-hidden="true">
