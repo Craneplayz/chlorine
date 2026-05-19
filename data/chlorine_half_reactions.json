@@ -323,7 +323,7 @@
       "plotBoundary": false,
       "color": "#8d6ec7",
       "equation": "Cl2(g) + 2e- → 2Cl-",
-      "note": "Direct gas chlorine boundary. Cl2 fugacity is estimated from dissolved chlorine using log10(fCl2) = logC - log10(KH), KH = 0.052 molal/bar; this Henry-law-coupled reference coincides with the Cl2(aq) / Cl- boundary and is not plotted separately.",
+      "note": "Direct gas chlorine boundary",
       "standardPotentialV": 1.358,
       "electronCount": 2,
       "reactants": [

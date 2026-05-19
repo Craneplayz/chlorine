@@ -489,6 +489,17 @@ onBeforeUnmount(stopPlayback)
           @mousemove="updateCursorPoint"
           @mouseleave="cursorPoint = null"
         >
+        <defs>
+          <clipPath id="pourbaix-plot-clip">
+            <rect
+              :x="margin.left"
+              :y="margin.top"
+              :width="plotWidth"
+              :height="plotHeight"
+            />
+          </clipPath>
+        </defs>
+
         <rect
           :x="margin.left"
           :y="margin.top"
@@ -523,7 +534,7 @@ onBeforeUnmount(stopPlayback)
           </text>
         </g>
 
-        <g>
+        <g clip-path="url(#pourbaix-plot-clip)">
           <polygon
             v-for="region in regions"
             :key="region.id"
@@ -548,52 +559,52 @@ onBeforeUnmount(stopPlayback)
               {{ segment.text }}
             </tspan>
           </text>
+
+          <polyline
+            v-for="segment in theoreticalBoundarySegments"
+            :key="segment.id"
+            :points="formatPath(segment.points)"
+            fill="none"
+            :stroke="segment.boundary.color"
+            :stroke-width="hovered?.id === segment.boundary.id ? 3 : 1.7"
+            stroke-dasharray="1 6"
+            stroke-linecap="round"
+            opacity="0.62"
+            @mouseenter="hovered = segment.boundary"
+            @mouseleave="hovered = null"
+          />
+
+          <polyline
+            v-for="segment in visibleBoundarySegments"
+            :key="segment.id"
+            :points="formatPath(segment.points)"
+            fill="none"
+            :stroke="segment.boundary.color"
+            :stroke-width="hovered?.id === segment.boundary.id ? 4 : 2.5"
+            :stroke-dasharray="boundaryDashArray(segment.boundary)"
+            stroke-linecap="round"
+            @mouseenter="hovered = segment.boundary"
+            @mouseleave="hovered = null"
+          />
+
+          <polyline
+            v-for="segment in theoreticalBoundarySegments"
+            :key="`${segment.id}-hitbox`"
+            :points="formatPath(segment.points)"
+            class="boundary-hitbox"
+            @mouseenter="hovered = segment.boundary"
+            @mouseleave="hovered = null"
+          />
+
+          <polyline
+            v-for="segment in visibleBoundarySegments"
+            :key="`${segment.id}-hitbox`"
+            :points="formatPath(segment.points)"
+            class="boundary-hitbox"
+            @mouseenter="hovered = segment.boundary"
+            @mouseleave="hovered = null"
+          />
         </g>
-
-        <polyline
-          v-for="segment in theoreticalBoundarySegments"
-          :key="segment.id"
-          :points="formatPath(segment.points)"
-          fill="none"
-          :stroke="segment.boundary.color"
-          :stroke-width="hovered?.id === segment.boundary.id ? 3 : 1.7"
-          stroke-dasharray="1 6"
-          stroke-linecap="round"
-          opacity="0.62"
-          @mouseenter="hovered = segment.boundary"
-          @mouseleave="hovered = null"
-        />
-
-        <polyline
-          v-for="segment in visibleBoundarySegments"
-          :key="segment.id"
-          :points="formatPath(segment.points)"
-          fill="none"
-          :stroke="segment.boundary.color"
-          :stroke-width="hovered?.id === segment.boundary.id ? 4 : 2.5"
-          :stroke-dasharray="boundaryDashArray(segment.boundary)"
-          stroke-linecap="round"
-          @mouseenter="hovered = segment.boundary"
-          @mouseleave="hovered = null"
-        />
-
-        <polyline
-          v-for="segment in theoreticalBoundarySegments"
-          :key="`${segment.id}-hitbox`"
-          :points="formatPath(segment.points)"
-          class="boundary-hitbox"
-          @mouseenter="hovered = segment.boundary"
-          @mouseleave="hovered = null"
-        />
-
-        <polyline
-          v-for="segment in visibleBoundarySegments"
-          :key="`${segment.id}-hitbox`"
-          :points="formatPath(segment.points)"
-          class="boundary-hitbox"
-          @mouseenter="hovered = segment.boundary"
-          @mouseleave="hovered = null"
-        />
 
         <line
           :x1="margin.left"

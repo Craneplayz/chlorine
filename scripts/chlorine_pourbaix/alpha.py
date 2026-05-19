@@ -25,7 +25,9 @@ def alpha_species_order(boundary_defs: list[dict]) -> list[str]:
     for defn in boundary_defs:
         if defn.get("kind") == "water":
             continue
-        if defn.get("regionReference") or defn.get("plotBoundary") is False:
+        if not defn.get("alphaConstraint") and (
+            defn.get("regionReference") or defn.get("plotBoundary") is False
+        ):
             continue
         for side_name in ("reactants", "products"):
             for term in defn[side_name]:
@@ -44,7 +46,9 @@ def alpha_constraint_boundaries(boundary_defs: list[dict]) -> list[dict]:
     for defn in boundary_defs:
         if defn.get("kind") == "water":
             continue
-        if defn.get("regionReference") or defn.get("plotBoundary") is False:
+        if not defn.get("alphaConstraint") and (
+            defn.get("regionReference") or defn.get("plotBoundary") is False
+        ):
             continue
         constraints.append(defn)
     return constraints
@@ -106,22 +110,49 @@ def reaction_known_log_q_coefficients(defn: dict) -> dict[str, float]:
 
     return coefficients
 
+def alpha_target_coefficients(defn: dict, nernst_factor: float) -> list[float]:
+    known = reaction_known_log_q_coefficients(defn)
+    if defn.get("kind") == "gasLiquidEquilibrium":
+        return [
+            float(defn["equilibriumLogK"]) - known["constant"],
+            -known["pH"],
+            0.0,
+            -known["logC"],
+        ]
+
+    nernst_scale = float(defn["electronCount"]) / nernst_factor
+    return [
+        nernst_scale * float(defn["standardPotentialV"]) - known["constant"],
+        -known["pH"],
+        -nernst_scale,
+        -known["logC"],
+    ]
+
+def alpha_target_grid(
+    defn: dict,
+    ph_grid: np.ndarray,
+    e_grid: np.ndarray,
+    log_c: float,
+    nernst_factor: float,
+) -> np.ndarray:
+    known_log_q = reaction_known_log_q(defn, ph_grid, log_c)
+    if defn.get("kind") == "gasLiquidEquilibrium":
+        return float(defn["equilibriumLogK"]) - known_log_q
+
+    return (
+        float(defn["electronCount"])
+        / nernst_factor
+        * (float(defn["standardPotentialV"]) - e_grid)
+        - known_log_q
+    )
+
 def composition_model(boundary_defs: list[dict], nernst_factor: float) -> dict:
     species_ids = alpha_species_order(boundary_defs)
     solver, constraints, _matrix = alpha_constraint_solver(boundary_defs, species_ids)
     target_coefficients = []
 
     for defn in constraints:
-        known = reaction_known_log_q_coefficients(defn)
-        nernst_scale = float(defn["electronCount"]) / nernst_factor
-        target_coefficients.append(
-            [
-                nernst_scale * float(defn["standardPotentialV"]) - known["constant"],
-                -known["pH"],
-                -nernst_scale,
-                -known["logC"],
-            ]
-        )
+        target_coefficients.append(alpha_target_coefficients(defn, nernst_factor))
 
     relative_coefficients = solver @ np.array(target_coefficients)
     chlorine_counts = species_chlorine_counts(species_ids)
@@ -258,13 +289,7 @@ def classified_alpha_region_grid(
     solver, constraints, _matrix = alpha_constraint_solver(boundary_defs, species_ids)
     target_rows = []
     for defn in constraints:
-        known_log_q = reaction_known_log_q(defn, ph_grid, log_c)
-        target = (
-            float(defn["electronCount"])
-            / nernst_factor
-            * (float(defn["standardPotentialV"]) - e_grid)
-            - known_log_q
-        )
+        target = alpha_target_grid(defn, ph_grid, e_grid, log_c, nernst_factor)
         target_rows.append(target.reshape(1, -1))
 
     target_matrix = np.vstack(target_rows)

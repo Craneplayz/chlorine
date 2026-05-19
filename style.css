@@ -136,12 +136,13 @@
 
 
 .slidev-layout.kinetic-diagram-slide {
-  padding: 1.25rem 2rem 1.35rem;
+  padding: 1.05rem 2rem 1.15rem;
+  overflow: hidden;
 }
 
 .slidev-layout.kinetic-diagram-slide h1 {
-  margin-bottom: 0.45rem;
-  font-size: 1.7rem;
+  margin-bottom: 0.25rem;
+  font-size: 1.55rem;
 }
 
 .slidev-layout.kinetic-diagram-slide img {

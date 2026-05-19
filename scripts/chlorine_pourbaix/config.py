@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
+from copy import deepcopy
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -23,6 +25,7 @@ TEMPERATURE_C_VALUES = [index * 2.5 for index in range(41)]
 DEFAULT_TEMPERATURE_C = 25.0
 STATIC_TEMPERATURE_C = 25.0
 STATIC_LOG_C = -3.0
+STATIC_PO2_LOG10_LEVELS = [-6.0, -4.0, -2.0, 0.0]
 
 SPECIES = [
     {"id": "cl_minus", "label": "Cl-", "color": "#2f6fba"},
@@ -36,6 +39,8 @@ SPECIES = [
     {"id": "clo4_minus", "label": "ClO4-", "color": "#6a7a89"},
 ]
 
+CL2_GAS_HENRY_KH = 0.052
+CL2_GAS_HENRY_LOG10_KH = -1.284
 REGION_SPECIES_ALIASES = {"cl2_g": "cl2"}
 REGION_PH_STEP = 0.05
 REGION_E_STEP = 0.01
@@ -68,3 +73,26 @@ TERM_SPECIES_ALIASES = {
     "ClO3-": "clo3_minus",
     "ClO4-": "clo4_minus",
 }
+
+
+def set_explicit_cl2_gas_mode(enabled: bool) -> None:
+    SPECIES[:] = [species for species in SPECIES if species["id"] != "cl2_g"]
+    REGION_SPECIES_ALIASES.clear()
+    REGION_SPECIES_ALIASES.update({"cl2_g": "cl2"})
+    TERM_SPECIES_ALIASES["Cl2(g)"] = "cl2"
+
+
+@contextmanager
+def chlorine_model_context(explicit_cl2_gas: bool = False):
+    previous_species = deepcopy(SPECIES)
+    previous_region_aliases = deepcopy(REGION_SPECIES_ALIASES)
+    previous_term_aliases = deepcopy(TERM_SPECIES_ALIASES)
+    set_explicit_cl2_gas_mode(explicit_cl2_gas)
+    try:
+        yield
+    finally:
+        SPECIES[:] = previous_species
+        REGION_SPECIES_ALIASES.clear()
+        REGION_SPECIES_ALIASES.update(previous_region_aliases)
+        TERM_SPECIES_ALIASES.clear()
+        TERM_SPECIES_ALIASES.update(previous_term_aliases)

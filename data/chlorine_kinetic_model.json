@@ -1,6 +1,6 @@
 {
   "title": "Kinetically constrained chlorine Eh-pH diagram",
-  "generatedAt": "2026-05-18T17:18:48.641704+00:00",
+  "generatedAt": "2026-05-19T00:47:26.497802+00:00",
   "source": "scripts/chlorine.py --kinetic",
   "temperatureC": 25.0,
   "logC": -3.0,
@@ -8,6 +8,66 @@
     "pHCount": 260,
     "eCount": 220
   },
+  "kineticSpecies": [
+    {
+      "id": "cl_minus",
+      "label": "Cl-",
+      "color": "#2f6fba"
+    },
+    {
+      "id": "cl2",
+      "label": "Cl2(aq)",
+      "color": "#7d5fb2"
+    },
+    {
+      "id": "hocl",
+      "label": "HOCl",
+      "color": "#d6a21e"
+    },
+    {
+      "id": "ocl_minus",
+      "label": "OCl-",
+      "color": "#3aa36d"
+    },
+    {
+      "id": "clo3_minus",
+      "label": "ClO3-",
+      "color": "#c45646"
+    },
+    {
+      "id": "clo4_minus",
+      "label": "ClO4-",
+      "color": "#6a7a89"
+    }
+  ],
+  "fastSpecies": [
+    "cl_minus",
+    "cl2",
+    "hocl",
+    "ocl_minus"
+  ],
+  "slowSpecies": [
+    "clo3_minus",
+    "clo4_minus"
+  ],
+  "controls": {
+    "logTimeSeconds": {
+      "min": 0.0,
+      "max": 7.5,
+      "step": 0.05,
+      "default": 4.93651,
+      "unit": "log10 seconds"
+    },
+    "logC": {
+      "source": "data/chlorine_pourbaix.json axes.logC",
+      "default": -3.0
+    },
+    "temperatureC": {
+      "source": "data/chlorine_pourbaix.json axes.temperatureC",
+      "default": 25.0
+    }
+  },
+  "defaultSeconds": 86400.0,
   "timeSlices": [
     {
       "label": "1 s",

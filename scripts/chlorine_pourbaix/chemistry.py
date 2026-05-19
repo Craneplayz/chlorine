@@ -15,6 +15,8 @@ from .config import (
     HPLUS_LOG_ACTIVITY,
     KELVIN_OFFSET,
     LOG10_E,
+    CL2_GAS_HENRY_KH,
+    CL2_GAS_HENRY_LOG10_KH,
     NORMALIZATION_CHECK_LOG_C_VALUES,
     NORMALIZATION_CHECK_PH_VALUES,
     OH_LOG_ACTIVITY,
@@ -364,16 +366,103 @@ def assert_equivalent_boundary_potentials(
 def normalize_half_reaction_payload(
     payload: dict,
     temperature_c: float = DEFAULT_TEMPERATURE_C,
+    explicit_cl2_gas: bool = False,
 ) -> dict:
     normalized_payload = deepcopy(payload)
     metadata = normalized_payload.setdefault("metadata", {})
     metadata["temperatureC"] = temperature_c
     nernst_factor = nernst_factor_v(temperature_c)
-    normalized_payload["boundaries"] = [
+    boundaries = [
         normalize_oh_terms_to_hplus(boundary, nernst_factor)
         for boundary in normalized_payload["boundaries"]
     ]
+    if explicit_cl2_gas:
+        boundaries = [
+            apply_cl2_gas_liquid_equilibrium(boundary, metadata, nernst_factor)
+            for boundary in boundaries
+        ]
+        boundaries.append(
+            cl2_gas_liquid_equilibrium_reference(metadata)
+        )
+    normalized_payload["boundaries"] = boundaries
     return normalized_payload
+
+def apply_cl2_gas_liquid_equilibrium(
+    defn: dict,
+    metadata: dict,
+    nernst_factor: float,
+) -> dict:
+    gas_reactant_count = coefficient_for_label(defn["reactants"], "Cl2(g)")
+    gas_product_count = coefficient_for_label(defn["products"], "Cl2(g)")
+    if abs(gas_reactant_count) < BALANCE_TOLERANCE and abs(gas_product_count) < BALANCE_TOLERANCE:
+        return defn
+
+    henry = metadata.get("henryLaw", {}).get("cl2GasProxy", {})
+    log10_kh = float(henry.get("log10KH", CL2_GAS_HENRY_LOG10_KH))
+    log_q_offset = (gas_reactant_count - gas_product_count) * log10_kh
+    transformed = deepcopy(defn)
+    transformed["sourceEquation"] = defn["equation"]
+    transformed["sourceStandardPotentialV"] = defn["standardPotentialV"]
+    transformed["standardPotentialV"] = float(defn["standardPotentialV"]) - (
+        nernst_factor / float(defn["electronCount"])
+    ) * log_q_offset
+    transformed["gasLiquidEquilibrium"] = {
+        "model": "Cl2(g) <=> Cl2(aq)",
+        "log10KH": log10_kh,
+        "logQOffset": log_q_offset,
+        "standardPotentialShiftV": transformed["standardPotentialV"]
+        - float(defn["standardPotentialV"]),
+    }
+
+    for species_key in ("species", "regionSpecies"):
+        if species_key in transformed:
+            transformed[species_key] = [
+                "cl2" if species_id == "cl2_g" else species_id
+                for species_id in transformed[species_key]
+            ]
+
+    for side_name in ("reactants", "products"):
+        for term in transformed[side_name]:
+            if term["label"] == "Cl2(g)":
+                term["label"] = "Cl2(aq)"
+                term["logActivity"] = {}
+
+    transformed["equation"] = format_half_reaction_equation(transformed)
+    note = transformed.get("note", "")
+    henry_note = (
+        "Cl2(g) terms are converted to Cl2(aq) using the explicit Henry-law "
+        f"equilibrium log10(aCl2(aq)/fCl2) = {log10_kh:g}."
+    )
+    transformed["note"] = f"{note} {henry_note}".strip()
+    validate_half_reaction_balance(transformed)
+    return transformed
+
+def cl2_gas_liquid_equilibrium_reference(metadata: dict) -> dict:
+    henry = metadata.get("henryLaw", {}).get("cl2GasProxy", {})
+    kh = float(henry.get("KH", CL2_GAS_HENRY_KH))
+    log10_kh = float(henry.get("log10KH", CL2_GAS_HENRY_LOG10_KH))
+
+    return {
+        "id": "cl2_g_cl2_aq_henry_equilibrium",
+        "kind": "gasLiquidEquilibrium",
+        "label": "Cl2(g) / Cl2(aq)",
+        "species": ["cl2_g", "cl2"],
+        "plotBoundary": False,
+        "color": "#9b6acb",
+        "equation": "Cl2(g) ⇌ Cl2(aq)",
+        "note": (
+            "Independent Henry-law gas-liquid equilibrium: "
+            f"log10(aCl2(aq)/fCl2) = log10(KH) = {log10_kh:g}; "
+            f"KH = {kh:g} molal/bar."
+        ),
+        "equilibriumLogK": log10_kh,
+        "reactants": [
+            {"label": "Cl2(g)", "coefficient": 1, "logActivity": {}},
+        ],
+        "products": [
+            {"label": "Cl2(aq)", "coefficient": 1, "logActivity": {}},
+        ],
+    }
 
 def validate_half_reaction_payload(payload: dict) -> None:
     if "boundaries" not in payload or not isinstance(payload["boundaries"], list):
@@ -445,6 +534,12 @@ def boundary_for_output(
     for equation_key in ("equation", "sourceEquation"):
         if equation_key in boundary:
             boundary[equation_key] = normalize_reaction_arrow(boundary[equation_key])
+    if defn.get("kind") == "gasLiquidEquilibrium":
+        boundary["points"] = []
+        boundary["activeSegments"] = []
+        boundary["activeRegionBoundary"] = False
+        return boundary
+
     boundary["points"] = boundary_points(defn, log_c, nernst_factor)
     boundary_species = defn.get("species", [])
     region_species = boundary_region_species(defn)

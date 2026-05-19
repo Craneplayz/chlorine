@@ -18,18 +18,137 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 
-from .config import ROOT, STATIC_LOG_C, STATIC_PDF_OUT, STATIC_PNG_OUT, STATIC_TEMPERATURE_C
+from .config import (
+    ROOT,
+    STATIC_LOG_C,
+    STATIC_PDF_OUT,
+    STATIC_PO2_LOG10_LEVELS,
+    STATIC_PNG_OUT,
+    STATIC_TEMPERATURE_C,
+)
 from .display import matplotlib_chemical_text
 from .generation import slice_for_log_c
 
 
-def write_static_phase_diagram(payload: dict) -> None:
+def nernst_factor_for_static_payload(payload: dict, static_temperature_c: float) -> float:
+    for temperature_payload in payload.get("temperatureSlices", []):
+        if abs(float(temperature_payload["temperatureC"]) - static_temperature_c) < 1e-9:
+            return float(temperature_payload["nernstFactorV"])
+
+    return float(payload.get("metadata", {}).get("nernstFactorV", 0.05915935))
+
+
+def oxygen_water_boundary(current_slice: dict) -> dict | None:
+    for boundary in current_slice.get("boundaries", []):
+        if boundary.get("id") == "water_o2_h2o":
+            return boundary
+
+    for boundary in current_slice.get("boundaries", []):
+        if boundary.get("kind") == "water" and "O2" in boundary.get("label", ""):
+            return boundary
+
+    return None
+
+
+def format_log_po2_label(log_po2: float) -> str:
+    if abs(log_po2) < 1e-9:
+        return r"$pO_2=1$"
+
+    exponent = int(round(log_po2)) if abs(log_po2 - round(log_po2)) < 1e-9 else log_po2
+    return rf"$pO_2=10^{{{exponent:g}}}$"
+
+
+def draw_po2_contours(
+    ax,
+    current_slice: dict,
+    axes: dict,
+    nernst_factor: float,
+    po2_log10_levels: list[float],
+) -> None:
+    boundary = oxygen_water_boundary(current_slice)
+    if boundary is None:
+        return
+
+    e_min = float(axes["E"]["min"])
+    e_max = float(axes["E"]["max"])
+    ph_min = float(axes["pH"]["min"])
+    ph_max = float(axes["pH"]["max"])
+    sorted_levels = sorted({float(level) for level in po2_log10_levels})
+
+    for index, log_po2 in enumerate(sorted_levels):
+        e_shift = nernst_factor * float(log_po2) / 4.0
+        points = [
+            {"pH": point["pH"], "E": point["E"] + e_shift}
+            for point in boundary.get("points", [])
+        ]
+        if len(points) < 2:
+            continue
+
+        x_values = [point["pH"] for point in points]
+        y_values = [point["E"] for point in points]
+        ax.plot(
+            x_values,
+            y_values,
+            color="#263238",
+            linestyle=(0, (1.2, 2.1)),
+            linewidth=1.05,
+            alpha=0.72,
+            label="pO2 contours" if index == 0 else "_nolegend_",
+            zorder=3,
+        )
+
+        visible_points = [
+            point
+            for point in points
+            if e_min <= point["E"] <= e_max
+        ]
+        if not visible_points:
+            continue
+
+        label_point = min(
+            visible_points,
+            key=lambda point: abs(
+                float(point["pH"])
+                - max(
+                    ph_min + 0.5,
+                    ph_max - 1.4 - index * 0.8,
+                )
+            ),
+        )
+        ax.text(
+            label_point["pH"],
+            label_point["E"],
+            format_log_po2_label(float(log_po2)),
+            color="#263238",
+            fontsize=7.5,
+            ha="left",
+            va="center",
+            zorder=6,
+            bbox={
+                "boxstyle": "round,pad=0.14",
+                "facecolor": "#fbfaf6",
+                "edgecolor": "none",
+                "alpha": 0.82,
+            },
+        )
+
+
+def write_static_phase_diagram(
+    payload: dict,
+    show_po2_contours: bool = False,
+    po2_log10_levels: list[float] | None = None,
+) -> None:
     axes = payload["axes"]
     current_slice = slice_for_log_c(payload["slices"], STATIC_LOG_C)
     species_by_id = {species["id"]: species for species in payload["species"]}
     static_temperature_c = float(
         payload.get("metadata", {}).get("staticTemperatureC", STATIC_TEMPERATURE_C)
     )
+    explicit_cl2_gas = bool(
+        payload.get("metadata", {}).get("modelOptions", {}).get("explicitCl2Gas")
+    )
+    po2_log10_levels = po2_log10_levels or STATIC_PO2_LOG10_LEVELS
+    nernst_factor = nernst_factor_for_static_payload(payload, static_temperature_c)
 
     fig, ax = plt.subplots(figsize=(10, 6), constrained_layout=True)
     ax.set_facecolor("#fbfaf6")
@@ -57,6 +176,15 @@ def write_static_phase_diagram(payload: dict) -> None:
             ha="center",
             va="center",
             zorder=3,
+        )
+
+    if show_po2_contours:
+        draw_po2_contours(
+            ax,
+            current_slice,
+            axes,
+            nernst_factor,
+            po2_log10_levels,
         )
 
     plot_boundaries = current_slice["boundaries"] + current_slice.get(
@@ -117,7 +245,9 @@ def write_static_phase_diagram(payload: dict) -> None:
     ax.set_title(
         "Chlorine Pourbaix Diagram\n"
         f"(Total chlorine = {10 ** STATIC_LOG_C:g} M; "
-        f"T = {static_temperature_c:g} °C)"
+        f"T = {static_temperature_c:g} °C"
+        f"{'; explicit Cl2(g) ⇌ Cl2(aq)' if explicit_cl2_gas else ''}"
+        f"{'; pO2 contours' if show_po2_contours else ''})"
     )
     ax.set_xticks(range(0, 15, 2))
     ax.grid(True, color="#d8d2c8", linewidth=0.8, alpha=0.65)

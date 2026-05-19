@@ -113,10 +113,12 @@ def temperature_slice_payload(
     raw_half_reaction_payload: dict,
     temperature_c: float,
     axes: dict,
+    explicit_cl2_gas: bool = False,
 ) -> dict:
     normalized_payload = normalize_half_reaction_payload(
         raw_half_reaction_payload,
         temperature_c,
+        explicit_cl2_gas=explicit_cl2_gas,
     )
     nernst_factor = nernst_factor_v(temperature_c)
     boundary_defs = normalized_payload["boundaries"]
@@ -145,12 +147,18 @@ def temperature_payload_for_value(
 def generate_interactive_payload(
     raw_half_reaction_payload: dict,
     temperature_values: list[float] | None = None,
+    explicit_cl2_gas: bool = False,
 ) -> dict:
     temperature_values = temperature_values or TEMPERATURE_C_VALUES
     axes = axes_config(temperature_values)
     metadata = raw_half_reaction_payload.get("metadata", {})
     temperature_slices = [
-        temperature_slice_payload(raw_half_reaction_payload, temperature_c, axes)
+        temperature_slice_payload(
+            raw_half_reaction_payload,
+            temperature_c,
+            axes,
+            explicit_cl2_gas=explicit_cl2_gas,
+        )
         for temperature_c in temperature_values
     ]
     default_temperature_payload = temperature_payload_for_value(
@@ -175,6 +183,17 @@ def generate_interactive_payload(
             "halfReactionSource": str(HALF_REACTIONS_IN.relative_to(ROOT)),
             "temperatureGridC": temperature_values,
             "logCGrid": LOG_C_VALUES,
+            "modelOptions": {
+                "explicitCl2Gas": explicit_cl2_gas,
+                "cl2GasLiquidEquilibrium": (
+                    "Cl2(g) half-reactions are analytically converted to "
+                    "Cl2(aq) through the independent Henry-law equilibrium "
+                    "log10(aCl2(aq)/fCl2)=log10(KH). Dominance regions remain "
+                    "on the aqueous total-chlorine basis."
+                )
+                if explicit_cl2_gas
+                else None,
+            },
             "warning": metadata.get(
                 "warning",
                 "Schematic teaching data. Replace constants with a vetted "
@@ -182,7 +201,7 @@ def generate_interactive_payload(
             ),
         },
         "axes": axes,
-        "species": SPECIES,
+        "species": [dict(species) for species in SPECIES],
         "compositionModel": default_temperature_payload["compositionModel"],
         "regions": default_slice["regions"],
         "slices": default_temperature_payload["slices"],

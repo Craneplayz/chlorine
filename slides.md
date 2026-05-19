@@ -241,7 +241,6 @@ Then the kinetic products are rescaled into this thermodynamic capacity.
 > **Equilibrium tells us where the system wants to go.**  
 > **Kinetics tells us how fast it can get there.**
 
-
 ---
 class: kinetic-diagram-slide
 ---
@@ -250,7 +249,15 @@ class: kinetic-diagram-slide
 
 <img class="rounded-xl h-115 dark:invert-100" src="/src/chlorine_kinetic_constrained.png" alt="Kinetically constrained chlorine Eh-pH diagram with one second, one hour, one day, and one year panels" />
 
-<!-- # Environmental Implications --> -->
+---
+class: kinetic-diagram-slide
+---
+
+# Interactive Kinetic Diagram
+
+<KineticDiagram />
+
+<!-- # Environmental Implications -->
 
 ---
 
@@ -259,4 +266,3 @@ class: kinetic-diagram-slide
 1. Lange, N. A. (1999). Lange’s Handbook of Chemistry (J. A. Dean, Ed.; 15th ed.). McGraw-Hill.
 2. Takeno, N. (2005). Atlas of Eh-pH Diagrams: Intercomparison of Thermodynamic Databases (No. 419; pp. 1–285). Geological Survey of Japan.
 3. Bard, A. J., Parsons, R., & Jordan, J. (1985). Standard Potentials in Aqueous Solution (1st ed). CRC Press.
-

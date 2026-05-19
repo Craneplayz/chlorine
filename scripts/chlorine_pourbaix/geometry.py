@@ -49,7 +49,7 @@ def redox_edges(boundary_defs: list[dict]) -> list[dict]:
     for defn in boundary_defs:
         boundary_species = boundary_region_species(defn)
         if (
-            defn.get("kind") == "water"
+            defn.get("kind") != "redox"
             or defn.get("regionReference")
             or len(boundary_species) != 2
         ):

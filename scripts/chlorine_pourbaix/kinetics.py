@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import tempfile
 from datetime import datetime, timezone
@@ -57,6 +58,13 @@ KINETIC_TIMES = (
     {"label": "1 year", "seconds": 365.25 * 24.0 * 60.0 * 60.0},
 )
 KINETIC_GRID = {"pHCount": 260, "eCount": 220}
+KINETIC_LOG_TIME_AXIS = {
+    "min": 0.0,
+    "max": 7.5,
+    "step": 0.05,
+    "default": round(math.log10(24.0 * 60.0 * 60.0), 5),
+    "unit": "log10 seconds",
+}
 HOCL_PKA = 7.5
 CL2_HYDROLYSIS_MIDPOINT_PH = 3.3
 SIGMOID_WIDTH_V = 0.08
@@ -399,6 +407,7 @@ def plot_reference_boundaries(
 
 
 def write_kinetic_model_json() -> None:
+    species_by_id = {species["id"]: species for species in SPECIES}
     metadata = {
         "title": "Kinetically constrained chlorine Eh-pH diagram",
         "generatedAt": datetime.now(timezone.utc).isoformat(),
@@ -406,6 +415,23 @@ def write_kinetic_model_json() -> None:
         "temperatureC": DEFAULT_TEMPERATURE_C,
         "logC": STATIC_LOG_C,
         "grid": KINETIC_GRID,
+        "kineticSpecies": [
+            species_by_id[species_id] for species_id in KINETIC_SPECIES
+        ],
+        "fastSpecies": list(FAST_SPECIES),
+        "slowSpecies": list(SLOW_SPECIES),
+        "controls": {
+            "logTimeSeconds": KINETIC_LOG_TIME_AXIS,
+            "logC": {
+                "source": "data/chlorine_pourbaix.json axes.logC",
+                "default": STATIC_LOG_C,
+            },
+            "temperatureC": {
+                "source": "data/chlorine_pourbaix.json axes.temperatureC",
+                "default": DEFAULT_TEMPERATURE_C,
+            },
+        },
+        "defaultSeconds": 24.0 * 60.0 * 60.0,
         "timeSlices": list(KINETIC_TIMES),
         "initialCondition": (
             "Total chlorine starts in the fast pool Cl-, Cl2(aq), HOCl, and OCl-. "
